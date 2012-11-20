@@ -45,12 +45,12 @@ public class GameActions implements CommandListener {
     
     public boolean gameCycle(int code){
         if (theBoard.getHumanPlayer().move() && 
-                theBoard.getState() == theBoard.PLAYING)
-        { //enter if human found valid sq
+        theBoard.getState() == theBoard.PLAYING) {   
+            //enter if human found valid sq
             theScreen.repaint();            
-            theBoard.getMachinePlayer().move(); //machine always finds valid sq
+            theBoard.getMachinePlayer().move(); 
+            //machine should always find a valid sq
         }
-//        theScreen.repaint();        
         return (null != theBoard.getWinner());
     }
 
@@ -60,20 +60,16 @@ public class GameActions implements CommandListener {
         switch (code) {
             case Canvas.FIRE:
                 this.gameCycle(code);
-                break;  
-
+                break;
             case Canvas.UP:
                 theBoard.updatePosition(0, -1);
                 break;
-
             case Canvas.DOWN:
                 theBoard.updatePosition(0, 1);
                 break;
-
             case Canvas.LEFT:
                 theBoard.updatePosition(-1, 0);
                 break;
-
             case Canvas.RIGHT:
                 theBoard.updatePosition(1, 0);
                 break;           
