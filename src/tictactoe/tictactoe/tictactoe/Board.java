@@ -38,20 +38,17 @@ public class Board {
     }
     
     public void display(Graphics g, int screenWidth, int screenHeight) {
-        g.translate((screenWidth - (GRID_SIZE * head.width) +1)/2, 10);
+        int boardWidth = GRID_SIZE * head.width;
+        int boardHeight = GRID_SIZE * head.height;
+        g.translate( (screenWidth -boardWidth -1)/2, 10);
         g.setColor(0);
-        g.drawRect(-2, -2, 
-            (GRID_SIZE * head.width) +2, (GRID_SIZE * head.height) +2);
-        for (int j = 0; j < GRID_SIZE; j++) {
-            for (int k = 0; k < GRID_SIZE; k++) {
+        g.drawRect(-2, -2, boardWidth +2, boardHeight +2);
+        for (int j = 0; j < GRID_SIZE; j++) 
+            for (int k = 0; k < GRID_SIZE; k++)
                 grid[j][k].paint(g);
-            }
-        }
-        g.translate(-g.getTranslateX(), -g.getTranslateY());
-        g.setColor(0);
         g.setFont(Font.getDefaultFont());
-        g.drawString(getStatus(), screenWidth/2, screenHeight -1,
-            Graphics.BOTTOM | Graphics.HCENTER);
+        g.drawString(getStatus(), boardWidth/2, boardHeight +10,
+            Graphics.TOP | Graphics.HCENTER);
     }
     
     public void createBoard(int size) {

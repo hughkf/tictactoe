@@ -88,7 +88,7 @@ public class GameActions implements CommandListener {
         Options(GameActions c, Command ok, Command exit) {
             super("Options");
             append(new StringItem("", 
-                "ConnectSquares.\n(c) 2008, Hugh Krogh-Freeman") );
+                "ConnectSquares.\n(c) 2008, 2012, Hugh Krogh-Freeman") );
             cg1 = new ChoiceGroup("Grid Size:", Choice.EXCLUSIVE);
             cg1.append("3 by 3 grid", null);
             cg1.append("4 by 4 grid", null);
