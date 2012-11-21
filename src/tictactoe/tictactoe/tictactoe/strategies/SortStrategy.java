@@ -8,15 +8,14 @@ import tictactoe.strategies.Sort.Comparator;
 /**
  * @author hugh
  */
-public class SortStrategy implements MachinePlayer.Strategy {    
-    protected Board theBoard;
+public class SortStrategy extends Strategy {    
     
     public SortStrategy(Board b){
-        theBoard = b;
+        super(b);
     }
     
     public Board.Square getBestSquare() {        
-        Object[] squares = this.getSortedSquares();        
+        Object[] squares = this.getSortedSquares();  
         return (squares.length == 0)? null: (Board.Square) squares[squares.length-1];
     }
         
@@ -38,6 +37,7 @@ public class SortStrategy implements MachinePlayer.Strategy {
         public int compare(Object obj1, Object obj2) {
             if (obj1 == null || obj2 == null)
                 throw new IllegalArgumentException("Arg is null!");
+            
             int score1 = theBoard.updateRowSum((Board.Square) obj1, 0) + 
                         theBoard.updateColumnSum((Board.Square) obj1, 0) +
                         theBoard.updateFwdDiagSum((Board.Square) obj1, 0) +

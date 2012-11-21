@@ -1,19 +1,17 @@
 package tictactoe.strategies;
 
 import tictactoe.Board;
-import tictactoe.players.MachinePlayer;
 
 /**
  * @author hugh
  */
-public class VacantStrategy implements MachinePlayer.Strategy {
-    private Board theBoard;
+public class VacantStrategy extends Strategy {
     
     public VacantStrategy(Board b){
-        theBoard = b;
+        super(b);
     }
     
     public Board.Square getBestSquare() {
-        return this.theBoard.findVacantSquare();
+        return findVacantSquare();
     }
 } 

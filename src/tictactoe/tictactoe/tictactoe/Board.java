@@ -10,7 +10,6 @@ import javax.microedition.lcdui.*;
 import tictactoe.players.*;
 
 public class Board {
-    private static final boolean DEBUG = false;
     public static final int PLAYING = 1; 
     public static final int WON = 5; 
     private Font font;
@@ -27,13 +26,10 @@ public class Board {
     private static final int xColSum = 1; 
     private static final int xDiagSum = 2; 
     private static final int yFwdDiagSum = 0; 
-    private static final int yBackDiagSum = 1;  
+    private static final int yBackDiagSum = 1; 
     
     public Board() {
         font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_MEDIUM); 
-        human = new Player(this, "You", "X", 1);
-        nobody = new Player(this, "No one", "?", 0);
-        machine = new MachinePlayer(this, "Hal 9000", "O", -1);
         vacancyCache = new Vector();
     }
     
@@ -51,12 +47,15 @@ public class Board {
             Graphics.TOP | Graphics.HCENTER);
     }
     
-    public void createBoard(int size) {
+    public void createBoard(int size, int difficulty) {
+        Board.GRID_SIZE = size; 
+        human = new Player(this, "You", "X", 1);
+        nobody = new Player(this, "No one", "?", 0);
+        machine = new MachinePlayer(this, "Hal 9000", "O", -1, difficulty);
         gameState = PLAYING;
         winner = null;      
         vacancyCache.removeAllElements();
         int i;
-        Board.GRID_SIZE = size; 
         scoreBoard = new Integer[size][size];
         for (int r = 0; r < GRID_SIZE; r++)
             for(int c = 0; c < GRID_SIZE; c++)
@@ -72,6 +71,8 @@ public class Board {
         posy = GRID_SIZE-1;
         grid[posx][posy].focus = true;
         head = grid[0][0];
+        Debug.printDebug(   "Difficulty level: " + difficulty 
+                            + ", Board size: " + GRID_SIZE);
     }
 
     public Square updatePosition(int x, int y) {
@@ -89,29 +90,37 @@ public class Board {
         grid[posx][posy].focus = true;
         return grid[posx][posy];
     }
-    
-    public Square findVacantSquare() {
-        Square sq;
-        try {
-            sq = (Square)vacancyCache.lastElement(); 
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-        return sq.occupied() ? null: sq;
-    }
 
+    /**
+     * TODO: add Player param, to get count by Player
+     * @param current
+     * @param n
+     * @return 
+     */
     public int updateRowSum(Square current, int n){
         int currentValue = scoreBoard[xRowSum][current.x].intValue();
         scoreBoard[xRowSum][current.x] = new Integer(n + currentValue);
         return n + currentValue;
     }
     
+    /**
+     * TODO: add Player param, to get count by Player
+     * @param current
+     * @param n
+     * @return 
+     */
     public int updateColumnSum(Square current, int n){
         int currentValue = scoreBoard[xColSum][current.y].intValue();
         scoreBoard[xColSum][current.y] = new Integer(n + currentValue);
         return n + currentValue;
     }
         
+    /**
+     * TODO: add Player param, to get count by Player
+     * @param current
+     * @param n
+     * @return 
+     */
     public int updateFwdDiagSum(Square current, int n){
         int currentValue = 0;
         if (current.x == current.y){
@@ -121,6 +130,12 @@ public class Board {
         return n + currentValue;
     }
 
+    /**
+     * TODO: add Player param, to get count by Player
+     * @param current
+     * @param n
+     * @return 
+     */
     public int updateBackDiagSum(Square current, int n){
         int currentValue = 0;
         if (current.x + current.y + 1 == GRID_SIZE){
@@ -156,12 +171,6 @@ public class Board {
     
     public Player getMachinePlayer(){
         return this.machine;
-    }
-    
-    public static void printDebug(String msg){
-        if (Board.DEBUG){
-            System.out.println(msg);
-        }
     }
     
     public class Square {
@@ -212,7 +221,6 @@ public class Board {
             this.label = p.getLabel();            
             vacancyCache.removeElement(this);
             Player player = updateScore(p);
-            debugInfo();
             return player;
         }
         
@@ -245,11 +253,6 @@ public class Board {
                     + ",\n\t fwd diagonal sum: " + Board.this.updateFwdDiagSum(this, 0)
                     + ", back diagonal sum: " + Board.this.updateBackDiagSum(this, 0) ;
         }
-        
-        public void debugInfo(){
-            Board.printDebug(this.toString());
-        }
-        
     } // end class Piece
     
 } // end class Board

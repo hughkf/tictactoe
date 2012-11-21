@@ -22,14 +22,14 @@ public class GameActions implements CommandListener {
         exit = new Command("Exit", Command.EXIT, 6);
         cancel = new Command("Exit", Command.CANCEL, 1);
         opt = new Options(this, ok, exit);
-        theBoard = new Board();
         theScreen = new Screen(this);
         display.setCurrent(opt);
     }
     
     public void commandAction(Command c, Displayable d) {
         if (c == ok) {
-            theBoard.createBoard(opt.getGridSize());            
+            theBoard = new Board();
+            theBoard.createBoard(opt.getGridSize(), opt.getDifficulty());            
             theScreen.addCommand(cancel);            
             display.setCurrent(theScreen);    
         } else if (c == cancel) {
@@ -45,8 +45,8 @@ public class GameActions implements CommandListener {
     
     public boolean gameCycle(int code){
         if (theBoard.getHumanPlayer().move() && 
-        theBoard.getState() == theBoard.PLAYING) {   
-            //enter if human found valid sq
+        theBoard.getState() == theBoard.PLAYING) 
+        {   //enter if human found valid sq
             theScreen.repaint();            
             theBoard.getMachinePlayer().move(); 
             //machine should always find a valid sq
@@ -79,19 +79,26 @@ public class GameActions implements CommandListener {
     }
     
     public class Options extends Form {
-        ChoiceGroup cg1;
+        ChoiceGroup cg1, cg2;
 
         Options(GameActions c, Command ok, Command exit) {
             super("Options");
             append(new StringItem("", 
-                "ConnectSquares.\n(c) 2008, 2012, Hugh Krogh-Freeman") );
-            cg1 = new ChoiceGroup("Grid Size:", Choice.EXCLUSIVE);
+                "\nConnectSquares.\n(c) 2008, 2012, Hugh Krogh-Freeman") );
+            cg1 = new ChoiceGroup("\nGrid Size:", Choice.EXCLUSIVE);
             cg1.append("3 by 3 grid", null);
             cg1.append("4 by 4 grid", null);
             cg1.append("5 by 5 grid", null);
             cg1.append("6 by 6 grid", null);
             append(cg1);
             cg1.setSelectedIndex(0, true);
+            cg2 = new ChoiceGroup("\nDifficulty:", Choice.EXCLUSIVE);
+            cg2.append("easy", null);
+            cg2.append("moderate", null);
+            cg2.append("hard", null);
+            append(cg2);
+            cg2.setSelectedIndex(0, true);
+
             addCommand( ok );
             addCommand( exit );
             setCommandListener(c);
@@ -100,5 +107,9 @@ public class GameActions implements CommandListener {
         public int getGridSize() {
             return cg1.getSelectedIndex() + 3;
         }            
+        
+        public int getDifficulty() {
+            return cg2.getSelectedIndex();
+        }
     }
 }

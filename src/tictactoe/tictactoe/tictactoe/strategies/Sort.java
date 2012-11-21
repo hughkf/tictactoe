@@ -1,7 +1,5 @@
 package tictactoe.strategies;
 
-import tictactoe.Board;
-
 /**
  * @author hugh
  */
@@ -49,7 +47,6 @@ public class Sort {
            public void heapify(int index) {
                int largerChild;
                Object top = elements[index]; 
-               Board.printDebug("top: " +top);
                while (index < currentSize / 2) {
                    int leftChild = 2 * index + 1;
                    int rightChild = leftChild + 1;
