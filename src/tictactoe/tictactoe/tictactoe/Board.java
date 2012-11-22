@@ -21,12 +21,6 @@ public class Board {
     private int gameState;
     private Vector vacancyCache;
     private Player human, machine, winner, nobody;
-    private Integer[][] scoreBoard;
-    private static final int xRowSum = 0; 
-    private static final int xColSum = 1; 
-    private static final int xDiagSum = 2; 
-    private static final int yFwdDiagSum = 0; 
-    private static final int yBackDiagSum = 1; 
     
     public Board() {
         font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_MEDIUM); 
@@ -49,17 +43,10 @@ public class Board {
     
     public void createBoard(int size, int difficulty) {
         Board.GRID_SIZE = size; 
-        human = new Player(this, "You", "X", 1);
-        nobody = new Player(this, "No one", "?", 0);
-        machine = new MachinePlayer(this, "Hal 9000", "O", -1, difficulty);
         gameState = PLAYING;
         winner = null;      
         vacancyCache.removeAllElements();
         int i;
-        scoreBoard = new Integer[size][size];
-        for (int r = 0; r < GRID_SIZE; r++)
-            for(int c = 0; c < GRID_SIZE; c++)
-                scoreBoard[r][c] = new Integer(0);        
         grid = new Square[GRID_SIZE][GRID_SIZE];
         for (i = 0; i < (GRID_SIZE * GRID_SIZE); i++) {
             int x = i % GRID_SIZE;
@@ -71,8 +58,10 @@ public class Board {
         posy = GRID_SIZE-1;
         grid[posx][posy].focus = true;
         head = grid[0][0];
-        Debug.printDebug(   "Difficulty level: " + difficulty 
-                            + ", Board size: " + GRID_SIZE);
+        human = new Player(this, "You", "O", 1);
+        nobody = new Player(this, "No one", "?", 0);
+        machine = new MachinePlayer(this, "Hal 9000", "X", -1, difficulty);
+        machine.move(); //machine makes the first move
     }
 
     public Square updatePosition(int x, int y) {
@@ -91,59 +80,9 @@ public class Board {
         return grid[posx][posy];
     }
 
-    /**
-     * TODO: add Player param, to get count by Player
-     * @param current
-     * @param n
-     * @return 
-     */
-    public int updateRowSum(Square current, int n){
-        int currentValue = scoreBoard[xRowSum][current.x].intValue();
-        scoreBoard[xRowSum][current.x] = new Integer(n + currentValue);
-        return n + currentValue;
+    public static int GRID_SIZE(){
+        return GRID_SIZE;
     }
-    
-    /**
-     * TODO: add Player param, to get count by Player
-     * @param current
-     * @param n
-     * @return 
-     */
-    public int updateColumnSum(Square current, int n){
-        int currentValue = scoreBoard[xColSum][current.y].intValue();
-        scoreBoard[xColSum][current.y] = new Integer(n + currentValue);
-        return n + currentValue;
-    }
-        
-    /**
-     * TODO: add Player param, to get count by Player
-     * @param current
-     * @param n
-     * @return 
-     */
-    public int updateFwdDiagSum(Square current, int n){
-        int currentValue = 0;
-        if (current.x == current.y){
-            currentValue = scoreBoard[xDiagSum][yFwdDiagSum].intValue();
-            scoreBoard[xDiagSum][yFwdDiagSum] = new Integer(n + currentValue);
-        }
-        return n + currentValue;
-    }
-
-    /**
-     * TODO: add Player param, to get count by Player
-     * @param current
-     * @param n
-     * @return 
-     */
-    public int updateBackDiagSum(Square current, int n){
-        int currentValue = 0;
-        if (current.x + current.y + 1 == GRID_SIZE){
-            currentValue = scoreBoard[xDiagSum][yBackDiagSum].intValue();
-            scoreBoard[xDiagSum][yBackDiagSum] = new Integer(n + currentValue);
-        }
-        return n + currentValue;
-    } 
     
     public String getStatus(){
         return (getWinner() == null)? "": getWinner().getName() +" won!";
@@ -189,17 +128,25 @@ public class Board {
             this.x =  x;
             this.y =  y;
             focus = false;
-        }        
+        }               
+        
+        public int getTotalScore(Player p){
+            return  p.updateRowSum(this, 0) +
+                    p.updateColumnSum(this, 0) +
+                    p.updateFwdDiagSum(this, 0) +
+                    p.updateBackDiagSum(this, 0);            
+        }
         
         public Player updateScore(Player p) {
-            int rowSum = Board.this.updateRowSum(this, p.getValue());
-            int colSum = Board.this.updateColumnSum(this, p.getValue());
-            int fwdDiagSum = Board.this.updateFwdDiagSum(this, p.getValue());
-            int backDiagSum = Board.this.updateBackDiagSum(this, p.getValue());
-            if (Math.abs(rowSum) >= GRID_SIZE 
-            || Math.abs(colSum) >= GRID_SIZE 
-            || Math.abs(fwdDiagSum) >= GRID_SIZE 
-            || Math.abs(backDiagSum) >= GRID_SIZE ) {                
+            int rowSum = p.updateRowSum(this, p.getValue());
+            int colSum = p.updateColumnSum(this, p.getValue());
+            int fwdDiagSum = p.updateFwdDiagSum(this, p.getValue());
+            int backDiagSum = p.updateBackDiagSum(this, p.getValue());
+            boolean gameIsWon = Math.abs(rowSum) >= GRID_SIZE || 
+                                Math.abs(colSum) >= GRID_SIZE || 
+                                Math.abs(fwdDiagSum) >= GRID_SIZE || 
+                                Math.abs(backDiagSum) >= GRID_SIZE;            
+            if (gameIsWon) {                
                 gameState = WON;
                 Board.this.winner = p;
             }
@@ -207,9 +154,13 @@ public class Board {
                 gameState = WON;
                 Board.this.winner = nobody;
             } 
-            return Board.this.getWinner();
+            Debug.printDebug("square ... " + this + 
+                            ", row sum: " + rowSum + ", col sum: " + colSum +
+                            ", fwd diag sum: " + fwdDiagSum + 
+                            ", back diag sum: " + backDiagSum);
+            return Board.this.winner;
         }
-        
+
         public boolean occupied() {
             return (this.label.length() > 0);
         }
@@ -244,15 +195,11 @@ public class Board {
         public int getY(){
             return this.y;
         }    
-        
+
         public String toString() {
-            return "\tx: " + x + ", y: " + y + 
-                    ",\n\t value: " + value + ", label: " + label 
-                    + ",\n\t row sum: " + Board.this.updateRowSum(this, 0)
-                    + ", column sum: " + Board.this.updateColumnSum(this, 0)
-                    + ",\n\t fwd diagonal sum: " + Board.this.updateFwdDiagSum(this, 0)
-                    + ", back diagonal sum: " + Board.this.updateBackDiagSum(this, 0) ;
-        }
+            return "x: "+ x + ", y: "+ y + ", value: "+ value + ", label: "+ label;
+        } //toString()
+
     } // end class Piece
     
 } // end class Board

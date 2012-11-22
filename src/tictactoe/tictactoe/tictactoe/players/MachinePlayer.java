@@ -13,20 +13,23 @@ public class MachinePlayer extends Player {
     public MachinePlayer(Board b, String n, String s, int v, int difficulty){
         super(b, n, s, v);
         switch(difficulty){
-            case 1:
+            default: case 0:
+                //select a vacant square at random
                 strategy = new RandomStrategy(b);
                 break;
-            case 2:
+            case 1:
+                //blocking strategy
                 strategy = new SortStrategy(b);
                 break;                
-            default: case 0:
-                strategy = new VacantStrategy(b);        
-                break;
+            case 2:
+                //this one uses blocking and tries to optimize the machine's score
+                strategy = new CompositeStrategy(b);
+                break;                
         }
         Debug.printDebug("Strategy: " + strategy.getClass().getName());
     }
 
     public Board.Square findSquare(){
-        return strategy.getBestSquare();
+        return strategy.getBestSquare();        
     }
 } //end class MachinePlayer

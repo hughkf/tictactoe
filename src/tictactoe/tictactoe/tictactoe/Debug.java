@@ -1,11 +1,10 @@
 package tictactoe;
 
 /**
- *
  * @author hugh
  */
 public class Debug {
-    public static final boolean DEBUG = true;    
+    public static final boolean DEBUG = false;    
 
     public static void printArray(Object[] array){
         for (int i=0; i < array.length; i++) {

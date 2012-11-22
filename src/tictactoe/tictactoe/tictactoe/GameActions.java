@@ -14,6 +14,7 @@ public class GameActions implements CommandListener {
     private Screen theScreen;
     private Board theBoard;
     private Display display;
+    private boolean turn;
     
     public GameActions(MIDlet midlet, Display display) {
         this.midlet = midlet;
@@ -24,6 +25,7 @@ public class GameActions implements CommandListener {
         opt = new Options(this, ok, exit);
         theScreen = new Screen(this);
         display.setCurrent(opt);
+        turn = true;
     }
     
     public void commandAction(Command c, Displayable d) {
@@ -43,6 +45,20 @@ public class GameActions implements CommandListener {
         this.theBoard.display(g, theScreen.getWidth(), theScreen.getHeight());
     }
     
+//    public boolean gameCycle_NEW(int code){
+//        if (turn == true){
+//            //machine always finds a valid sq
+//            theBoard.getMachinePlayer().move(); 
+//            theScreen.repaint();            
+//            turn = false;
+//        }
+//        if (turn == false && theBoard.getHumanPlayer().move()){
+//            theScreen.repaint();                    
+//            turn = true; //the human found valid sq
+//        }        
+//        return (null != theBoard.getWinner());
+//    }
+
     public boolean gameCycle(int code){
         if (theBoard.getHumanPlayer().move() && 
         theBoard.getState() == theBoard.PLAYING) 

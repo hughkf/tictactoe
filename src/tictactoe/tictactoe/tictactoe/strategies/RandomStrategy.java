@@ -2,10 +2,8 @@ package tictactoe.strategies;
 
 import java.util.*;
 import tictactoe.Board;
-import tictactoe.players.MachinePlayer;
 
 /**
- *
  * @author hugh
  */
 public class RandomStrategy extends Strategy {
