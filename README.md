@@ -35,4 +35,4 @@ Execution instructions
 	4. Then, run the MIDlet:
 	<wireless tool kit>/bin/emulator -Xjam:run=#Vendor_#Tictactoe_
 	5. If you see the first screen of the game, which includes a copyright statement and four radio buttons to choose either "3 by 3 grid", "4 by 4 grid", "5 by 5 grid", or "6 by 6 grid", then it's working. 
-	6. Enjoy the game! This may be the most difficult step :P
+	6. Play the game!
