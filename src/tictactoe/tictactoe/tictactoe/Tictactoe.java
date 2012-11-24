@@ -7,9 +7,10 @@ package tictactoe;
 
 /*
  * Changelog:
- * - TODO: Add Player parameter to score-keeping methods, i.e. updateRowSum(), etc
  * - TODO: JUnit tests
  * - TODO: Machine learning strategy
+ * - (done) Add Player parameter to score-keeping methods, i.e. 
+ *      updateRowSum(), etc
  * - (done) added a choice group for selecting the strategy
  * - (done) Make Strategy abstract
  * - (done) mvn/ant build

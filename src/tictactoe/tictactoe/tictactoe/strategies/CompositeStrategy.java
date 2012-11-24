@@ -15,18 +15,52 @@ public class CompositeStrategy extends Strategy {
     }
     
     public Board.Square getBestSquare() {        
-        //first block, if the human can win on the next move
-        Board.Square max = getMaxPiece(theBoard.getHumanPlayer());
-        if (max != null && max.getTotalScore(theBoard.getHumanPlayer()) +1 == Board.GRID_SIZE() ){
-            return max;
+        //choose a winning square if there is one
+        if (!getWinningSquares(theBoard.getMachinePlayer()).isEmpty() ){
+            return (Board.Square) getWinningSquares(theBoard.getMachinePlayer()).firstElement();
         }
-        //Otherwise, find the square with the highest machine score, to win
-        return getMaxPiece(theBoard.getMachinePlayer());        
+        //else, block human if he/she can win on the next move
+        if (!getWinningSquares(theBoard.getHumanPlayer()).isEmpty() ){
+            return (Board.Square) getWinningSquares(theBoard.getHumanPlayer()).firstElement();
+        }
+        //else, choose the square with the highest machine score
+        return (Board.Square) getMaxSquares(theBoard.getMachinePlayer()).firstElement();
     }
-        
-    protected Board.Square getMaxPiece(Player p) {
-        Object[] squares = this.getSortedSquares(p);  
-        return (squares.length == 0)? null: (Board.Square) squares[squares.length-1];            
+     
+    protected Vector getWinningSquares(Player p){
+        Vector winningSquares = new Vector();
+        Vector maxSquares = this.getMaxSquares(p);
+        Board.Square sq;
+        boolean winningSq;
+        for (Enumeration e = maxSquares.elements(); e.hasMoreElements(); ){
+            sq = (Board.Square) e.nextElement();
+            if (sq != null && ( 
+                Math.abs( p.updateRowSum(sq, 0) ) +1 >= Board.GRID_SIZE() ||
+                Math.abs( p.updateColumnSum(sq, 0) ) +1 >= Board.GRID_SIZE() ||
+                Math.abs( p.updateFwdDiagSum(sq, 0) ) +1 >= Board.GRID_SIZE() ||
+                Math.abs( p.updateBackDiagSum(sq, 0) ) +1 >= Board.GRID_SIZE() )) 
+            {
+                winningSquares.addElement(sq);
+            }
+        }
+        return winningSquares;
+    }
+
+    protected Vector getMaxSquares(Player p) {
+        Object[] squares = this.getSortedSquares(p); 
+        Vector maxSquares = new Vector();
+        //since squares is sorted in ascending order, the last element is largest, max
+        Board.Square max = (Board.Square) squares[squares.length-1], sq;
+        maxSquares.addElement(max);
+        for (int i=squares.length-2; i >= 0; i--){
+            sq = (Board.Square) squares[i];
+            if (sq != null && sq != max && Math.abs( sq.getTotalScore(p)) == 
+            Math.abs( max.getTotalScore(p))) {
+                max = sq;             
+                maxSquares.addElement(max);
+            }
+        }
+        return maxSquares;    
     }
 
     protected Object[] getSortedSquares(Player p){

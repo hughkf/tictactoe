@@ -14,7 +14,7 @@ public class Board {
     public static final int WON = 5; 
     private Font font;
     private Square[][] grid;
-    public static int GRID_SIZE;
+    private static int GRID_SIZE;
     private int posx;
     private int posy;
     private Square head;
@@ -154,10 +154,6 @@ public class Board {
                 gameState = WON;
                 Board.this.winner = nobody;
             } 
-            Debug.printDebug("square ... " + this + 
-                            ", row sum: " + rowSum + ", col sum: " + colSum +
-                            ", fwd diag sum: " + fwdDiagSum + 
-                            ", back diag sum: " + backDiagSum);
             return Board.this.winner;
         }
 

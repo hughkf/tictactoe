@@ -1,7 +1,6 @@
 package tictactoe.players;
 
 import tictactoe.Board;
-import tictactoe.Debug;
 import tictactoe.strategies.*;
 
 /**
@@ -26,7 +25,6 @@ public class MachinePlayer extends Player {
                 strategy = new CompositeStrategy(b);
                 break;                
         }
-        Debug.printDebug("Strategy: " + strategy.getClass().getName());
     }
 
     public Board.Square findSquare(){
