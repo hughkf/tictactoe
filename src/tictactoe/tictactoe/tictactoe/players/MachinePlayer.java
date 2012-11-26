@@ -1,12 +1,13 @@
 package tictactoe.players;
 
-import tictactoe.Board;
+import tictactoe.strategies.Strategy;
+import tictactoe.*;
 import tictactoe.strategies.*;
 
 /**
  * @author hugh
  */
-public class MachinePlayer extends Player {    
+public class MachinePlayer extends HumanPlayer {    
     private Strategy strategy;
 
     public MachinePlayer(Board b, String n, String s, int v, int difficulty){
@@ -17,10 +18,6 @@ public class MachinePlayer extends Player {
                 strategy = new RandomStrategy(b);
                 break;
             case 1:
-                //blocking strategy
-                strategy = new SortStrategy(b);
-                break;                
-            case 2:
                 //this one uses blocking and tries to optimize the machine's score
                 strategy = new CompositeStrategy(b);
                 break;                

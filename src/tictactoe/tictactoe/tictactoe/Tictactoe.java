@@ -3,12 +3,13 @@ package tictactoe;
  * Copyright (c) 2012, Hugh Krogh-Freeman
  * This source code is distributed under the terms of the GNU General Public 
  * License.
- */
 
-/*
  * Changelog:
- * - TODO: JUnit tests
+ * - TODO: j2meunit tests
  * - TODO: Machine learning strategy
+ * 
+ * - (done) Rearranged buttons so you can "play again" rather than needing to
+ *      exit to the settings screen first
  * - (done) Add Player parameter to score-keeping methods, i.e. 
  *      updateRowSum(), etc
  * - (done) added a choice group for selecting the strategy

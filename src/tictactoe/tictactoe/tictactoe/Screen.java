@@ -27,6 +27,7 @@ public class Screen extends Canvas {
     protected void paint(Graphics g) {
         g.setColor(0xFFFFFF);
         g.fillRect(0, 0, getWidth(), getHeight());
-        control.displayBoard(g);
+//        control.displayBoard(g);
+        control.theBoard().display(g, getWidth(), getHeight());
     }
 }

@@ -1,9 +1,10 @@
 package tictactoe.strategies;
 
 import java.util.*;
-import tictactoe.Board;
-import tictactoe.players.Player;
-import tictactoe.strategies.Sort.Comparator;
+import tictactoe.*;
+import tictactoe.players.*;
+import tictactoe.utils.Sort;
+import tictactoe.utils.Sort.Comparator;
 
 /**
  * @author hugh
@@ -27,7 +28,7 @@ public class CompositeStrategy extends Strategy {
         return (Board.Square) getMaxSquares(theBoard.getMachinePlayer()).firstElement();
     }
      
-    protected Vector getWinningSquares(Player p){
+    protected Vector getWinningSquares(HumanPlayer p){
         Vector winningSquares = new Vector();
         Vector maxSquares = this.getMaxSquares(p);
         Board.Square sq;
@@ -46,7 +47,7 @@ public class CompositeStrategy extends Strategy {
         return winningSquares;
     }
 
-    protected Vector getMaxSquares(Player p) {
+    protected Vector getMaxSquares(HumanPlayer p) {
         Object[] squares = this.getSortedSquares(p); 
         Vector maxSquares = new Vector();
         //since squares is sorted in ascending order, the last element is largest, max
@@ -63,7 +64,7 @@ public class CompositeStrategy extends Strategy {
         return maxSquares;    
     }
 
-    protected Object[] getSortedSquares(Player p){
+    protected Object[] getSortedSquares(HumanPlayer p){
         Vector vacancies = theBoard.getCache();
         Board.Square[] squares = new Board.Square[vacancies.size()];
         for (int i=0; i<vacancies.size(); i++)
@@ -73,9 +74,9 @@ public class CompositeStrategy extends Strategy {
 
     class SquareComparator implements Comparator {
         private Board theBoard;
-        private Player player;
+        private HumanPlayer player;
         
-        public SquareComparator(Board b, Player p){
+        public SquareComparator(Board b, HumanPlayer p){
             theBoard = b;
             player = p;
         }

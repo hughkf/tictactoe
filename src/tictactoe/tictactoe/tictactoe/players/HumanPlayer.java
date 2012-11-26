@@ -6,7 +6,7 @@ import tictactoe.Board;
  * @author hugh
  */
     
-public class Player {
+public class HumanPlayer {
     String name;
     String label;
     int value;
@@ -18,7 +18,7 @@ public class Player {
     private static final int fwdDiagSumIndex = 0; 
     private static final int backDiagSumIndex = 1; 
     
-    public Player(Board b, String n, String s, int v) {
+    public HumanPlayer(Board b, String n, String s, int v) {
         theBoard = b;
         name = n;
         label = s;
@@ -30,7 +30,7 @@ public class Player {
         Board.Square sq = this.findSquare();
         if (sq == null)
             return false;                 
-        Player p = sq.occupy(this);
+        HumanPlayer p = sq.occupy(this);
         return true;
     }
     
@@ -94,4 +94,4 @@ public class Player {
             for(int c = 0; c < Board.GRID_SIZE(); c++)
                 scoreBoard[r][c] = new Integer(0);                        
     }
-} //end class Player
+} //end class HumanPlayer

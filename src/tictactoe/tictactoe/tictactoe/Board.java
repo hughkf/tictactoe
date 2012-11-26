@@ -1,26 +1,18 @@
 package tictactoe;
 
-/* Copyright (c) 2012, Hugh Krogh-Freeman
- *
- * This source code is distributed under the terms of the 
- * GNU General Public License.
- */
 import java.util.*;
 import javax.microedition.lcdui.*;
 import tictactoe.players.*;
 
 public class Board {
-    public static final int PLAYING = 1; 
-    public static final int WON = 5; 
-    private Font font;
-    private Square[][] grid;
+    private HumanPlayer human, machine, winner, nobody;
+    public static final int PLAYING = 1, WON = 5; 
     private static int GRID_SIZE;
-    private int posx;
-    private int posy;
-    private Square head;
-    private int gameState;
+    private int posx, posy, gameState;
     private Vector vacancyCache;
-    private Player human, machine, winner, nobody;
+    private Square head;
+    private Square[][] grid;
+    private Font font;
     
     public Board() {
         font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_MEDIUM); 
@@ -58,8 +50,8 @@ public class Board {
         posy = GRID_SIZE-1;
         grid[posx][posy].focus = true;
         head = grid[0][0];
-        human = new Player(this, "You", "O", 1);
-        nobody = new Player(this, "No one", "?", 0);
+        human = new HumanPlayer(this, "You", "O", 1);
+        nobody = new HumanPlayer(this, "No one", "?", 0);
         machine = new MachinePlayer(this, "Hal 9000", "X", -1, difficulty);
         machine.move(); //machine makes the first move
     }
@@ -92,7 +84,7 @@ public class Board {
         return this.vacancyCache;
     }
     
-    public Player getWinner(){
+    public HumanPlayer getWinner(){
         return this.winner;
     }
     
@@ -104,11 +96,11 @@ public class Board {
         return this.grid;
     }
 
-    public Player getHumanPlayer() {
+    public HumanPlayer getHumanPlayer() {
         return this.human;
     }
     
-    public Player getMachinePlayer(){
+    public HumanPlayer getMachinePlayer(){
         return this.machine;
     }
     
@@ -130,14 +122,14 @@ public class Board {
             focus = false;
         }               
         
-        public int getTotalScore(Player p){
+        public int getTotalScore(HumanPlayer p){
             return  p.updateRowSum(this, 0) +
                     p.updateColumnSum(this, 0) +
                     p.updateFwdDiagSum(this, 0) +
                     p.updateBackDiagSum(this, 0);            
         }
         
-        public Player updateScore(Player p) {
+        public HumanPlayer updateScore(HumanPlayer p) {
             int rowSum = p.updateRowSum(this, p.getValue());
             int colSum = p.updateColumnSum(this, p.getValue());
             int fwdDiagSum = p.updateFwdDiagSum(this, p.getValue());
@@ -161,13 +153,13 @@ public class Board {
             return (this.label.length() > 0);
         }
         
-        public Player occupy(Player p) {
+        public HumanPlayer occupy(HumanPlayer p) {
             if (p == null) 
                 return null;
             this.value = p.getValue();
             this.label = p.getLabel();            
             vacancyCache.removeElement(this);
-            Player player = updateScore(p);
+            HumanPlayer player = updateScore(p);
             return player;
         }
         

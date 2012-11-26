@@ -4,74 +4,57 @@ import javax.microedition.lcdui.*;
 import javax.microedition.midlet.MIDlet;
 
 /**
- *
  * @author Hugh
  */
 public class GameActions implements CommandListener {
     private MIDlet midlet;
-    private Command exit, cancel, ok; 
+    private Command exit, settings, start, reset; 
     private Options opt;
     private Screen theScreen;
     private Board theBoard;
     private Display display;
-    private boolean turn;
     
     public GameActions(MIDlet midlet, Display display) {
         this.midlet = midlet;
         this.display = display;
-        ok = new Command("Start", Command.OK, 0);
+        start = new Command("Play", Command.OK, 0);
+        reset = new Command("Play again", Command.OK, 0);
+        settings = new Command("Settings", Command.CANCEL, 1);
         exit = new Command("Exit", Command.EXIT, 6);
-        cancel = new Command("Exit", Command.CANCEL, 1);
-        opt = new Options(this, ok, exit);
+        opt = new Options(this, start, exit);
         theScreen = new Screen(this);
         display.setCurrent(opt);
-        turn = true;
     }
     
     public void commandAction(Command c, Displayable d) {
-        if (c == ok) {
+        if (c == start || c == reset) {
             theBoard = new Board();
             theBoard.createBoard(opt.getGridSize(), opt.getDifficulty());            
-            theScreen.addCommand(cancel);            
+            theScreen.addCommand(settings);               
+            theScreen.removeCommand(reset);
             display.setCurrent(theScreen);    
-        } else if (c == cancel) {
+            theScreen.repaint();
+        } else if (c == settings) {
             display.setCurrent(this.opt);
         } else if (c == exit) {
             this.midlet.notifyDestroyed();
         }   
     }
-        
-    public void displayBoard(Graphics g) {
-        this.theBoard.display(g, theScreen.getWidth(), theScreen.getHeight());
-    }
     
-//    public boolean gameCycle_NEW(int code){
-//        if (turn == true){
-//            //machine always finds a valid sq
-//            theBoard.getMachinePlayer().move(); 
-//            theScreen.repaint();            
-//            turn = false;
-//        }
-//        if (turn == false && theBoard.getHumanPlayer().move()){
-//            theScreen.repaint();                    
-//            turn = true; //the human found valid sq
-//        }        
-//        return (null != theBoard.getWinner());
-//    }
-
-    public boolean gameCycle(int code){
-        if (theBoard.getHumanPlayer().move() && 
-        theBoard.getState() == theBoard.PLAYING) 
-        {   //enter if human found valid sq
+    public void gameCycle(int code){
+        if (theBoard.getHumanPlayer().move() && theBoard.getState() == theBoard.PLAYING) 
+        {   //we're here because human found valid square
             theScreen.repaint();            
             theBoard.getMachinePlayer().move(); 
-            //machine should always find a valid sq
+            //machine always finds valid square
         }
-        return (null != theBoard.getWinner());
+        if (theBoard.getWinner() != null){            
+            theScreen.addCommand(reset);
+        }
     }
 
     public int processGameAction(int code) {
-        if (theBoard.getState() != theBoard.PLAYING)
+        if (theBoard.getState() != theBoard.PLAYING)            
             return code;
         switch (code) {
             case Canvas.FIRE:
@@ -94,6 +77,10 @@ public class GameActions implements CommandListener {
         return code;
     }
     
+    public Board theBoard() {
+        return this.theBoard;
+    }
+    
     public class Options extends Form {
         ChoiceGroup cg1, cg2;
 
@@ -106,12 +93,11 @@ public class GameActions implements CommandListener {
             cg1.append("4 by 4 grid", null);
             cg1.append("5 by 5 grid", null);
             cg1.append("6 by 6 grid", null);
+            cg2 = new ChoiceGroup("\nDifficulty:", Choice.EXCLUSIVE);
+            cg2.append("trivial", null);
+            cg2.append("moderate", null);
             append(cg1);
             cg1.setSelectedIndex(0, true);
-            cg2 = new ChoiceGroup("\nDifficulty:", Choice.EXCLUSIVE);
-            cg2.append("easy", null);
-            cg2.append("moderate", null);
-            cg2.append("hard", null);
             append(cg2);
             cg2.setSelectedIndex(0, true);
 
