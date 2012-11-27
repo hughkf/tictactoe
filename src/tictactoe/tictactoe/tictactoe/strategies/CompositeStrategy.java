@@ -2,8 +2,9 @@ package tictactoe.strategies;
 
 import java.util.*;
 import tictactoe.*;
+import tictactoe.Board.Square;
 import tictactoe.players.*;
-import tictactoe.utils.Sort;
+import tictactoe.utils.*;
 import tictactoe.utils.Sort.Comparator;
 
 /**
@@ -15,31 +16,29 @@ public class CompositeStrategy extends Strategy {
         super(b);
     }
     
-    public Board.Square getBestSquare() {        
+    public Square getBestSquare() {        
         //choose a winning square if there is one
         if (!getWinningSquares(theBoard.getMachinePlayer()).isEmpty() ){
-            return (Board.Square) getWinningSquares(theBoard.getMachinePlayer()).firstElement();
+            return (Square) getWinningSquares(theBoard.getMachinePlayer()).firstElement();
         }
         //else, block human if he/she can win on the next move
         if (!getWinningSquares(theBoard.getHumanPlayer()).isEmpty() ){
-            return (Board.Square) getWinningSquares(theBoard.getHumanPlayer()).firstElement();
+            return (Square) getWinningSquares(theBoard.getHumanPlayer()).firstElement();
         }
         //else, choose the square with the highest machine score
-        return (Board.Square) getMaxSquares(theBoard.getMachinePlayer()).firstElement();
+        return (Square) getMaxSquares(theBoard.getMachinePlayer()).firstElement();
     }
      
-    protected Vector getWinningSquares(HumanPlayer p){
+    protected Vector getWinningSquares(Player p){
+        Square sq;
         Vector winningSquares = new Vector();
-        Vector maxSquares = this.getMaxSquares(p);
-        Board.Square sq;
-        boolean winningSq;
-        for (Enumeration e = maxSquares.elements(); e.hasMoreElements(); ){
-            sq = (Board.Square) e.nextElement();
+        for (Enumeration e = this.getMaxSquares(p).elements(); e.hasMoreElements(); ){
+            sq = (Square) e.nextElement();
             if (sq != null && ( 
-                Math.abs( p.updateRowSum(sq, 0) ) +1 >= Board.GRID_SIZE() ||
-                Math.abs( p.updateColumnSum(sq, 0) ) +1 >= Board.GRID_SIZE() ||
-                Math.abs( p.updateFwdDiagSum(sq, 0) ) +1 >= Board.GRID_SIZE() ||
-                Math.abs( p.updateBackDiagSum(sq, 0) ) +1 >= Board.GRID_SIZE() )) 
+            Math.abs( p.rowScore(sq, 0) ) +1 >= Board.GRID_SIZE() ||
+            Math.abs( p.columnScore(sq, 0) ) +1  >= Board.GRID_SIZE() ||
+            Math.abs( p.fwdDiagScore(sq, 0) ) +1 >= Board.GRID_SIZE() ||
+            Math.abs( p.backDiagScore(sq, 0) ) +1 >= Board.GRID_SIZE() )) 
             {
                 winningSquares.addElement(sq);
             }
@@ -47,16 +46,17 @@ public class CompositeStrategy extends Strategy {
         return winningSquares;
     }
 
-    protected Vector getMaxSquares(HumanPlayer p) {
+    protected Vector getMaxSquares(Player p) {
         Object[] squares = this.getSortedSquares(p); 
         Vector maxSquares = new Vector();
-        //since squares is sorted in ascending order, the last element is largest, max
-        Board.Square max = (Board.Square) squares[squares.length-1], sq;
+        //squares is sorted in ascending order, the last element is max
+        Square max = (Square) squares[squares.length-1], sq;
         maxSquares.addElement(max);
+        //gather any others with the same total score
         for (int i=squares.length-2; i >= 0; i--){
-            sq = (Board.Square) squares[i];
-            if (sq != null && sq != max && Math.abs( sq.getTotalScore(p)) == 
-            Math.abs( max.getTotalScore(p))) {
+            sq = (Square) squares[i];
+            if (sq != null && sq != max && 
+            Math.abs( sq.totalScore(p)) == Math.abs( max.totalScore(p))) {
                 max = sq;             
                 maxSquares.addElement(max);
             }
@@ -64,20 +64,18 @@ public class CompositeStrategy extends Strategy {
         return maxSquares;    
     }
 
-    protected Object[] getSortedSquares(HumanPlayer p){
+    protected Object[] getSortedSquares(Player p){
         Vector vacancies = theBoard.getCache();
-        Board.Square[] squares = new Board.Square[vacancies.size()];
+        Square[] squares = new Square[vacancies.size()];
         for (int i=0; i<vacancies.size(); i++)
-            squares[i] = (Board.Square) vacancies.elementAt(i);
-        return Sort.sort(squares, new SquareComparator(this.theBoard, p));
+            squares[i] = (Square) vacancies.elementAt(i);
+        return Sort.sort(squares, new SquareComparator(p));
     }
 
     class SquareComparator implements Comparator {
-        private Board theBoard;
-        private HumanPlayer player;
+        private Player player;
         
-        public SquareComparator(Board b, HumanPlayer p){
-            theBoard = b;
+        public SquareComparator(Player p){
             player = p;
         }
         
@@ -85,8 +83,8 @@ public class CompositeStrategy extends Strategy {
             if (obj1 == null || obj2 == null){
                 throw new IllegalArgumentException("Arg is null!");
             }            
-            int score1 = Math.abs( ((Board.Square) obj1).getTotalScore(this.player) );
-            int score2 = Math.abs( ((Board.Square) obj2).getTotalScore(this.player) );            
+            int score1 = Math.abs( ((Square) obj1).totalScore(player) );
+            int score2 = Math.abs( ((Square) obj2).totalScore(player) );            
             if (score1-score2 < 0){
                 return -1;
             } else if (score1-score2 > 0){

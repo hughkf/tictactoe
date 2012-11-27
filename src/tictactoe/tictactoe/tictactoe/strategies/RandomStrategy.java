@@ -2,6 +2,7 @@ package tictactoe.strategies;
 
 import java.util.*;
 import tictactoe.Board;
+import tictactoe.Board.Square;
 
 /**
  * @author hugh
@@ -12,15 +13,13 @@ public class RandomStrategy extends Strategy {
         super(b);
     }
     
-    public Board.Square getBestSquare() {
-        Board.Square sq;
+    public Square getBestSquare() {
         int randomIndex = Math.abs(new Random().nextInt() ) % theBoard.getCache().size();
         try {
-            sq = (Board.Square) theBoard.getCache().elementAt(randomIndex);
+            Square sq = (Square) theBoard.getCache().elementAt(randomIndex);
+            return (sq == null || sq.occupied()) ? null: sq;
         } catch (NoSuchElementException e) {
             return null;
         }
-        return sq.occupied() ? null: sq;
     }
-
-}
+} // class RandomStrategy

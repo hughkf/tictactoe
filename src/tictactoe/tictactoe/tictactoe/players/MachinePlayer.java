@@ -2,12 +2,13 @@ package tictactoe.players;
 
 import tictactoe.strategies.Strategy;
 import tictactoe.*;
+import tictactoe.Board.Square;
 import tictactoe.strategies.*;
 
 /**
  * @author hugh
  */
-public class MachinePlayer extends HumanPlayer {    
+public class MachinePlayer extends Player {    
     private Strategy strategy;
 
     public MachinePlayer(Board b, String n, String s, int v, int difficulty){
@@ -24,7 +25,7 @@ public class MachinePlayer extends HumanPlayer {
         }
     }
 
-    public Board.Square findSquare(){
+    public Square findSquare(){
         return strategy.getBestSquare();        
     }
 } //end class MachinePlayer

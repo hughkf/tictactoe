@@ -11,11 +11,10 @@ public class Sort {
     }
   
     public interface Comparator {
-        /**
-         * obj1 < obj2: return -1
+
+        /* obj1 < obj2: return -1
          * obj1 == obj2: return 0;
-         * obj1 > obj2: return +1
-         */
+         * obj1 > obj2: return +1 */
         public int compare(Object obj1, Object obj2);
     }
         

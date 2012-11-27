@@ -5,7 +5,7 @@ import javax.microedition.lcdui.*;
 import tictactoe.players.*;
 
 public class Board {
-    private HumanPlayer human, machine, winner, nobody;
+    private Player human, machine, winner, nobody;
     public static final int PLAYING = 1, WON = 5; 
     private static int GRID_SIZE;
     private int posx, posy, gameState;
@@ -25,9 +25,10 @@ public class Board {
         g.translate( (screenWidth -boardWidth -1)/2, 10);
         g.setColor(0);
         g.drawRect(-2, -2, boardWidth +2, boardHeight +2);
-        for (int j = 0; j < GRID_SIZE; j++) 
+        for (int j = 0; j < GRID_SIZE; j++){ 
             for (int k = 0; k < GRID_SIZE; k++)
                 grid[j][k].paint(g);
+        }
         g.setFont(Font.getDefaultFont());
         g.drawString(getStatus(), boardWidth/2, boardHeight +10,
             Graphics.TOP | Graphics.HCENTER);
@@ -35,12 +36,9 @@ public class Board {
     
     public void createBoard(int size, int difficulty) {
         Board.GRID_SIZE = size; 
-        gameState = PLAYING;
-        winner = null;      
         vacancyCache.removeAllElements();
-        int i;
         grid = new Square[GRID_SIZE][GRID_SIZE];
-        for (i = 0; i < (GRID_SIZE * GRID_SIZE); i++) {
+        for (int i = 0; i < (GRID_SIZE * GRID_SIZE); i++) {
             int x = i % GRID_SIZE;
             int y = i / GRID_SIZE;
             grid[x][y] = new Square(x, y);
@@ -50,8 +48,10 @@ public class Board {
         posy = GRID_SIZE-1;
         grid[posx][posy].focus = true;
         head = grid[0][0];
-        human = new HumanPlayer(this, "You", "O", 1);
-        nobody = new HumanPlayer(this, "No one", "?", 0);
+        gameState = PLAYING;
+        winner = null;      
+        human = new Player(this, "You", "O", 1);
+        nobody = new Player(this, "No one", "?", 0);
         machine = new MachinePlayer(this, "Hal 9000", "X", -1, difficulty);
         machine.move(); //machine makes the first move
     }
@@ -84,7 +84,7 @@ public class Board {
         return this.vacancyCache;
     }
     
-    public HumanPlayer getWinner(){
+    public Player getWinner(){
         return this.winner;
     }
     
@@ -92,15 +92,11 @@ public class Board {
         return gameState;
     }
     
-    public Board.Square[][] getGrid() {
-        return this.grid;
-    }
-
-    public HumanPlayer getHumanPlayer() {
+    public Player getHumanPlayer() {
         return this.human;
     }
     
-    public HumanPlayer getMachinePlayer(){
+    public Player getMachinePlayer(){
         return this.machine;
     }
     
@@ -111,7 +107,7 @@ public class Board {
         int y; // grid coordinates
         int width;
         int height;
-        int value; //make this a byte?
+        int value; 
         
         public Square(int x, int y) {
             width = font.charWidth('M') + 7;
@@ -122,27 +118,24 @@ public class Board {
             focus = false;
         }               
         
-        public int getTotalScore(HumanPlayer p){
-            return  p.updateRowSum(this, 0) +
-                    p.updateColumnSum(this, 0) +
-                    p.updateFwdDiagSum(this, 0) +
-                    p.updateBackDiagSum(this, 0);            
+        public int totalScore(Player p){
+            return  p.rowScore(this, 0) +
+                    p.columnScore(this, 0) +
+                    p.fwdDiagScore(this, 0) +
+                    p.backDiagScore(this, 0);            
         }
         
-        public HumanPlayer updateScore(HumanPlayer p) {
-            int rowSum = p.updateRowSum(this, p.getValue());
-            int colSum = p.updateColumnSum(this, p.getValue());
-            int fwdDiagSum = p.updateFwdDiagSum(this, p.getValue());
-            int backDiagSum = p.updateBackDiagSum(this, p.getValue());
-            boolean gameIsWon = Math.abs(rowSum) >= GRID_SIZE || 
-                                Math.abs(colSum) >= GRID_SIZE || 
-                                Math.abs(fwdDiagSum) >= GRID_SIZE || 
-                                Math.abs(backDiagSum) >= GRID_SIZE;            
-            if (gameIsWon) {                
+        public Player updateScore(Player p) {
+            /* Scoring is (1): one update to row, col, & 
+             * diag sums each time a square is occupied */
+            if (Math.abs( p.rowScore(this, p.getValue())) >= GRID_SIZE || 
+                Math.abs( p.columnScore(this, p.getValue())) >= GRID_SIZE || 
+                Math.abs( p.fwdDiagScore(this, p.getValue())) >= GRID_SIZE || 
+                Math.abs( p.backDiagScore(this, p.getValue())) >= GRID_SIZE ) 
+            {                
                 gameState = WON;
                 Board.this.winner = p;
-            }
-            else if (vacancyCache.isEmpty()) {
+            } else if (vacancyCache.isEmpty()) {
                 gameState = WON;
                 Board.this.winner = nobody;
             } 
@@ -153,13 +146,13 @@ public class Board {
             return (this.label.length() > 0);
         }
         
-        public HumanPlayer occupy(HumanPlayer p) {
+        public Player occupy(Player p) {
             if (p == null) 
                 return null;
             this.value = p.getValue();
             this.label = p.getLabel();            
             vacancyCache.removeElement(this);
-            HumanPlayer player = updateScore(p);
+            Player player = updateScore(p);
             return player;
         }
         
@@ -186,8 +179,6 @@ public class Board {
 
         public String toString() {
             return "x: "+ x + ", y: "+ y + ", value: "+ value + ", label: "+ label;
-        } //toString()
-
-    } // end class Piece
-    
+        }
+    } // end class Piece    
 } // end class Board

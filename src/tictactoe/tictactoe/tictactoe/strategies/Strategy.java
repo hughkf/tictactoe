@@ -1,6 +1,7 @@
 package tictactoe.strategies;
 
 import tictactoe.Board;
+import tictactoe.Board.Square;
 
 /**
  * @author hugh
@@ -12,5 +13,5 @@ public abstract class Strategy {
         theBoard = b;
     }
 
-    public abstract Board.Square getBestSquare();    
+    public abstract Square getBestSquare();    
 } //end Strategy 
