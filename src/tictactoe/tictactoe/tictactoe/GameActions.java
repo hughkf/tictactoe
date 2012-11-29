@@ -23,7 +23,7 @@ public class GameActions implements CommandListener {
         exit = new Command("Exit", Command.EXIT, 6);
         opt = new Options(this, start, exit);
         theScreen = new Screen(this);
-        display.setCurrent(opt);
+        this.display.setCurrent(opt);
     }
     
     public void commandAction(Command c, Displayable d) {

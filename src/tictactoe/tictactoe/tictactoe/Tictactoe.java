@@ -29,12 +29,10 @@ import javax.microedition.midlet.MIDlet;
 public class Tictactoe extends MIDlet {
 
     public void startApp() {
-        GameActions control = new GameActions(this, Display.getDisplay(this));
+        new GameActions(this, Display.getDisplay(this));
     }
 
-    public void pauseApp() {
-    }
+    public void pauseApp() {}
 
-    public void destroyApp(boolean unc) {
-    }
+    public void destroyApp(boolean unconditional) {}
 }

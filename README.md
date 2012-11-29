@@ -13,10 +13,12 @@ System requirements
 Build instructions
 ==================
 * With Netbeans:
+---------------
 	1. The easiest way is to install Netbeans. This way, you do not need ant. Use the root directory to create a J2ME project in Netbean. Then, just build the project.
 
 
 * Without Netbeans:
+------------------
 	1. In the top level directory, run the command: "ant".
 	2. If you need to re-compile, run: "ant clean".
 	3. This will create two new directories: build and dist.
@@ -24,10 +26,12 @@ Build instructions
 Execution instructions
 ======================
 * With Netbeans: 
+---------------
 	1. Run the project you created and built under "Build instructions". 
 
 
 * Without Netbeans:
+------------------
 	1. Set up the web server to serve dist/Tictactoe.jad and dist/Tictactoe.jar. 
 	2. Locate the J2ME emulator. Suppose the path is <Wireless tool kit>/bin/emulator
 	3. First, install the MIDlet (you only need to do this once): 

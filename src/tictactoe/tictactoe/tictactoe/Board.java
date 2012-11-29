@@ -100,6 +100,10 @@ public class Board {
         return this.machine;
     }
     
+    public Square[][] getGrid() {
+        return this.grid;
+    }
+    
     public class Square {
         boolean focus;
         String label;
@@ -152,8 +156,7 @@ public class Board {
             this.value = p.getValue();
             this.label = p.getLabel();            
             vacancyCache.removeElement(this);
-            Player player = updateScore(p);
-            return player;
+            return updateScore(p);
         }
         
         void paint(Graphics g) {

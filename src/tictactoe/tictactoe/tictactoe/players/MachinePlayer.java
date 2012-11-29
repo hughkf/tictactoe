@@ -20,7 +20,7 @@ public class MachinePlayer extends Player {
                 break;
             case 1:
                 //this one uses blocking and tries to optimize the machine's score
-                strategy = new CompositeStrategy(b);
+                strategy = new BlockingStrategy(b);
                 break;                
         }
     }
